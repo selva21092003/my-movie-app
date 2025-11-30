@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getBaseUrl = () => {
   const apiKey = import.meta.env.VITE_MOVIES_API_KEY;
-  const BASE_URL = `https://api.themoviedb.org/3/movie/967941/similar?api_key=${apiKey}&language=en-US&page=1`;
+  const BASE_URL = `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US&page=1`;
   return BASE_URL;
 };
 
