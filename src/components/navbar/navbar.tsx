@@ -6,6 +6,15 @@ import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import Selector from "../selector/selector";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setGenres,
+  setGenresValue,
+  setSearchValue,
+} from "../../slices/movieSlice";
+import { useEffect, useRef, useState } from "react";
+import { fetchGenres } from "../../api/moviesApi";
+import type { RootState } from "../../store/store";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -48,6 +57,37 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Navbar() {
+  const dispatch = useDispatch();
+  let searchTimeout = useRef(null);
+  const [inputValue, setInputValue] = useState("");
+  const searchValue = useSelector(
+    (state: RootState) => state.movie.searchValue
+  );
+
+  const handleSearch = (e) => {
+    clearTimeout(searchTimeout.current);
+    setInputValue(e.target.value);
+    dispatch(setGenresValue(null));
+    searchTimeout.current = setTimeout(() => {
+      dispatch(setSearchValue(e.target.value));
+    }, 500);
+  };
+
+  const getGenres = async () => {
+    const { genres } = await fetchGenres();
+    dispatch(setGenres(genres));
+  };
+
+  useEffect(() => {
+    getGenres();
+  }, []);
+
+  useEffect(() => {
+    if (searchValue == null) {
+      setInputValue("");
+    }
+  }, [searchValue]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ bgcolor: "gray" }}>
@@ -65,7 +105,9 @@ export default function Navbar() {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
+              value={inputValue}
               placeholder="Search…"
+              onChange={(e) => handleSearch(e)}
               inputProps={{ "aria-label": "search" }}
             />
           </Search>

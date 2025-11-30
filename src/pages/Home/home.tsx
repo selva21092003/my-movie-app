@@ -1,13 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../../components/navbar/navbar";
 import type { RootState } from "../../store/store";
-import { fetchMovies } from "../../api/moviesApi";
+import { fetchMovies, searchMovies } from "../../api/moviesApi";
 import { addMovies } from "../../slices/movieSlice";
 import { useEffect } from "react";
 import MovieCard from "../../components/card/card";
 
 const Home = () => {
-  const movies = useSelector((state: RootState) => state.movie.movies);
+  let movies = useSelector((state: RootState) => state.movie.movies);
+  const searchValue = useSelector(
+    (state: RootState) => state.movie.searchValue
+  );
   const dispatch = useDispatch();
 
   const setMoviesData = async () => {
@@ -15,9 +18,24 @@ const Home = () => {
     dispatch(addMovies(results));
   };
 
+  const getSearchMovies = async () => {
+    if (searchValue!=null) {
+      const { results } = await searchMovies(searchValue);
+      if (results.length > 0) {
+        dispatch(addMovies(results));
+      } else {
+        setMoviesData();
+      }
+    }
+  };
+
   useEffect(() => {
     setMoviesData();
   }, []);
+
+  useEffect(() => {
+    getSearchMovies();
+  }, [searchValue]);
 
   return (
     <>

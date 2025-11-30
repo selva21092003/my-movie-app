@@ -15,7 +15,7 @@ export default function MovieCard({ movie }) {
         height="400"
         image={`https://image.tmdb.org/t/p/w342/${movie.poster_path}`}
       />
-      <CardContent>
+      <CardContent sx={{backgroundColor: 'rgba(219, 214, 204, 1)'}}>
         <Typography gutterBottom component="div">
           {movie.title}
           <div style={{display: 'flex',justifyContent: 'end'}}>
